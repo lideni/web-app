@@ -44,6 +44,8 @@
 
 		<script type="text/babel">
 			var map;
+
+			//parse stations.json, find all the latitude and longitude
 			var obj = JSON.parse(JSON.stringify(stations));
 		    	var latList = [];
 		    	var longList = [];
@@ -51,6 +53,9 @@
 		    		latList.push(obj.stationBeanList[i].latitude);
 					longList.push(obj.stationBeanList[i].longitude);
 		    	}
+
+
+		    //layout for the Toronto interests table 
 			var InterestsTable = React.createClass({
 				render: function(){
 					return(
@@ -120,6 +125,7 @@
 			});
 			
 
+			//set up Toronto interests map
 			var InterestsMap = React.createClass({
 				componentDidMount: function (){
 					var cnTower = {lat: 43.642566, lng: -79.387057};
@@ -134,11 +140,14 @@
 			        var cityHall = {lat: 43.65344, lng: -79.38409};
 			        var hockey = {lat: 43.646988, lng: -79.377264};
 
+			        //set up the initial map with proper center and zoom 
+			        //replace the content of element id "map"
 			        map = new google.maps.Map(document.getElementById('map'), {
 			          zoom: 11,
 			          center: yorkdale
 			        });
 
+			        //info box for each marker 
 			        var cnTowerInfo = new google.maps.InfoWindow({
 			          content: "<h1>CN Tower</h1>"
 			        });
@@ -174,6 +183,9 @@
 			          content: '<h1>Air Canada Center</h1>'
 			        });
 
+
+			        //add makers with info box for each location on
+			        // the map 
 			        var cnTowerMarker = new google.maps.Marker({
 			          position: cnTower,
 			          map: map,
@@ -265,18 +277,22 @@
 				},
 				render: function(){
 					return(
-						<div>
-						</div>
+						null
 					);
 				}
 			});
 
+
+			// set up map for all the bixi stations 
 			var BixiMap = React.createClass({
 				componentDidMount: function (){
+					//initial map with proper center and zoom 
 			        map = new google.maps.Map(document.getElementById('map'), {
 			          zoom: 13,
 			          center: {lat: 43.66207, lng: -79.37617}
 			        });
+
+			        //place a marker on the map for each location 
 			        for(var x = 0; x < latList.length; x ++){
 			        	new google.maps.Marker({
 				          position: {lat: latList[x], lng: longList[x]},
@@ -287,12 +303,14 @@
 			    },
 				render: function(){
 					return(
-						<div></div>
+						null
 					);
 				}
 			});
 
-		
+			
+			//all the button components 
+			//all buttons have a onClick prop
 			var InterestsTableButton = React.createClass({
 				propTypes:{
 					onClick: React.PropTypes.func.isRequired
@@ -332,11 +350,13 @@
 			var SignOutScreen = React.createClass({
 				render: function(){
 					return(
-						<div></div>
+						null
 					);
 				}
 			});
 
+
+			//the main component
 			var Buttons = React.createClass({
 				getInitialState: function(){
 					return({
@@ -356,6 +376,7 @@
 					);
 				},
 
+				//internal state "compToShow" changes depending on which button are clicked 
 				interestsTable: function(){
 					this.setState({
 						compToShow: <InterestsTable />
@@ -421,6 +442,7 @@
 		  	//add a realtime listener
 		  	firebase.auth().onAuthStateChanged(firebaseUser =>{
 		  		if(firebaseUser){
+		  			//display the page content if the user is logged in 
 		  			console.log(firebaseUser);
 		  			btnLogout.classList.remove('hide');
 		  			btnSingup.classList.add('hide');
@@ -433,6 +455,8 @@
 					);
 		  		}
 		  		else{
+		  			//hide all the page content when no user
+		  			// have been logged in  
 		  			console.log("not logged in");
 		  			btnLogout.classList.add('hide');
 		  			btnSingup.classList.remove('hide');
