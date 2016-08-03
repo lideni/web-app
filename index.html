@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    	<meta charset="utf-8">
+    	<title>Web App</title>
+    	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    	<script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script>
+  		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.2.0/react.js"></script>
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.2.0/react-dom.js"></script>
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.16/browser.js"></script>
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/1.6.2/remarkable.min.js"></script>
+	    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDKT1qFwEfdAzSDTpkg8vr2HiPNKX6Pi8o&callback=initMap"
+	    async defer></script>
+	    <script src="stations.js" type="text/javascript"></script> 
+
+	    <style>
+	      	html, body {
+	        	height: 100%;
+	        	margin: 0;
+	        	padding: 0;
+	      	}
+	      	#map {
+		        height: 70%;
+		        width: 70%;
+		    }
+   	 	</style>
+	</head>
+	<body>
+		<div>
+			<input id="txtEmail" type="email" placeholder="Email"></input>
+			<input id="txtPassword" type="password" placeholder="Password"></input>
+			<button id ="btnLogin" class="btn btn-action">Log In</button>
+			<button id="btnSingup" class="btn btn-action">Sign Up</button>
+			<button id ="btnLogout" class="btn btn-action hide">Log Out</button>
+		</div>
+
+		<div id="container"></div>
+		<div id="map" class= "hide"></div>
+	
+		
+
+
+		<script type="text/babel">
+			var map;
+			var obj = JSON.parse(JSON.stringify(stations));
+		    	var latList = [];
+		    	var longList = [];
+		    	for(var i = 0; i < obj.stationBeanList.length; i++ ){
+		    		latList.push(obj.stationBeanList[i].latitude);
+					longList.push(obj.stationBeanList[i].longitude);
+		    	}
+			var InterestsTable = React.createClass({
+				render: function(){
+					return(
+						<table className="table">
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Picture</th>
+									<th>Website</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Ripleys Aquarium</td>
+									<td><img src="images/aquarium.png" alt="aquarium"></img></td>
+									<td><a href="http://www.ripleyaquariums.com/canada/">Visit their site</a></td>
+								</tr>
+								<tr>
+									<td>CN Tower</td>
+									<td><img src="images/cntower.jpg" alt="cn tower"></img></td>
+									<td><a href="http://www.cntower.ca/en-ca/home.html">Visit their site</a></td>
+								</tr>
+								<tr>
+									<td>Toronto Zoo</td>
+									<td><img src="images/torontozoo.jpg" alt="zoo"></img></td>
+									<td><a href="http://www.torontozoo.com/">Visit their site</a></td>
+								</tr>
+								<tr>
+									<td>Royal Ontario Museum</td>
+									<td><img src="images/rom.jpg" alt="rom"></img></td>
+									<td><a href="http://www.rom.on.ca/en">Visit their site</a></td>
+								</tr>
+								<tr>
+									<td>Art Gallery of Ontario</td>
+									<td><img src="images/artgalleryontario.jpg" alt="ago"></img></td>
+									<td><a href="http://www.ago.net/">Visit their site</a></td>
+								</tr>
+								<tr>
+									<td>Yorkdale Mall</td>
+									<td><img src="images/yorkdalemall.jpg" alt="york dale"></img></td>
+									<td><a href="http://yorkdale.com/">Visit their site</a></td>
+								</tr>
+								<tr>
+									<td>Eaton Center</td>
+									<td><img src="images/torontoeatoncentre.jpg" alt="eaton"></img></td>
+									<td><a href="http://www.torontoeatoncentre.com/en/Pages/default.aspx">Visit their site</a></td>
+								</tr>
+								<tr>
+									<td>City Hall</td>
+									<td><img src="images/torontocityhall.jpg" alt="city hall"></img></td>
+									<td><a href="http://www.toronto.ca/">Visit their site</a></td>
+								</tr>
+								<tr>
+									<td>Hockey Hall of Fame</td>
+									<td><img src="images/aquarium.png" alt="hockey"></img></td>
+									<td><a href="http://www.hhof.com">Visit their site</a></td>
+								</tr>
+								<tr>
+									<td>Air Canada Center</td>
+									<td><img src="images/aquarium.png" alt="acc"></img></td>
+									<td><a href="http://www.theaircanadacentre.com/">Visit their site</a></td>
+								</tr>
+							</tbody>
+						</table>
+					);
+				}
+			});
+			
+
+			var InterestsMap = React.createClass({
+				componentDidMount: function (){
+					var cnTower = {lat: 43.642566, lng: -79.387057};
+			        var aquarium = {lat: 43.642424, lng: -79.385865};
+			        var zoo = {lat: 43.817699, lng: -79.18589};
+			        var rom = {lat: 43.66771, lng: -79.394777};
+			        var acc = {lat: 43.643466, lng: -79.379099};
+
+			        var ago = {lat: 43.653607, lng: -79.392512};
+			        var yorkdale = {lat: 43.725887, lng: -79.453206};
+			        var eaton = {lat: 43.653597, lng: -79.381455};
+			        var cityHall = {lat: 43.65344, lng: -79.38409};
+			        var hockey = {lat: 43.646988, lng: -79.377264};
+
+			        map = new google.maps.Map(document.getElementById('map'), {
+			          zoom: 11,
+			          center: yorkdale
+			        });
+
+			        var cnTowerInfo = new google.maps.InfoWindow({
+			          content: "<h1>CN Tower</h1>"
+			        });
+			        var aquariumInfo = new google.maps.InfoWindow({
+			          content: "<h1>Ripley's Aquarium</h1>"
+			        });
+			        var zooInfo = new google.maps.InfoWindow({
+			          content: '<h1>Toronto Zoo</h1>'
+			        });  
+			        var romInfo = new google.maps.InfoWindow({
+			          content: '<h1>Royal Ontario Museum</h1>'
+			        });
+			        var agoInfo = new google.maps.InfoWindow({
+			          content: '<h1>Art Gallery of Ontario</h1>'
+			        });
+
+			        var yorkdaleInfo = new google.maps.InfoWindow({
+			          content: '<h1>Yorkdale Mall</h1>'
+			        });
+
+			        var eatonInfo = new google.maps.InfoWindow({
+			          content: '<h1>Eaton Center</h1>'
+			        });
+
+			        var cityHallInfo = new google.maps.InfoWindow({
+			          content: '<h1>City Hall</h1>'
+			        });
+
+			        var hockeyInfo = new google.maps.InfoWindow({
+			          content: '<h1>Hockey Hall of Fame</h1>'
+			        });
+			        var accInfo = new google.maps.InfoWindow({
+			          content: '<h1>Air Canada Center</h1>'
+			        });
+
+			        var cnTowerMarker = new google.maps.Marker({
+			          position: cnTower,
+			          map: map,
+			          title: 'cn tower'
+			        });
+			        cnTowerMarker.addListener('click', function(){
+			          cnTowerInfo.open(map, cnTowerMarker);
+			        });
+
+			        var aquariumMarker = new google.maps.Marker({
+			          position: aquarium,
+			          map: map,
+			          title: 'aquarium'
+			        });
+			        aquariumMarker.addListener('click', function(){
+			          aquariumInfo.open(map, aquariumMarker);
+			        });
+
+			        var zooMarker = new google.maps.Marker({
+			          position: zoo,
+			          map: map,
+			          title: 'zoo'
+			        });
+			        zooMarker.addListener('click', function(){
+			          zooInfo.open(map, zooMarker);
+			        });
+			        var romMarker = new google.maps.Marker({
+			          position: rom,
+			          map: map,
+			          title: 'rom'
+			        });
+			        romMarker.addListener('click', function(){
+			          romInfo.open(map, romMarker);
+			        });
+			        
+			        var agoMarker = new google.maps.Marker({
+			          position: ago,
+			          map: map,
+			          title: 'ago'
+			        });
+			        agoMarker.addListener('click', function(){
+			          agoInfo.open(map, agoMarker);
+			        });
+			        
+			        var yorkdaleMarker = new google.maps.Marker({
+			          position: yorkdale,
+			          map: map,
+			          title: 'yorkdale'
+			        });
+			        yorkdaleMarker.addListener('click', function(){
+			          yorkdaleInfo.open(map, yorkdaleMarker);
+			        });
+			        
+			        var eatonMarker = new google.maps.Marker({
+			          position: eaton,
+			          map: map,
+			          title: 'eaton'
+			        });
+			        eatonMarker.addListener('click', function(){
+			          eatonInfo.open(map, eatonMarker);
+			        });
+			        
+			        var cityHallMarker = new google.maps.Marker({
+			          position: cityHall,
+			          map: map,
+			          title: 'city hall'
+			        });
+			        cityHallMarker.addListener('click', function(){
+			          cityHallInfo.open(map, cityHallMarker);
+			        });
+			        
+			        var hockeyMarker = new google.maps.Marker({
+			          position: hockey,
+			          map: map,
+			          title: 'hockey'
+			        });
+			        hockeyMarker.addListener('click', function(){
+			          hockeyInfo.open(map, hockeyMarker);
+			        });
+			        
+			        var accMarker = new google.maps.Marker({
+			          position: acc,
+			          map: map,
+			          title: 'acc'
+			        });
+			        accMarker.addListener('click', function(){
+			          accInfo.open(map, accMarker);
+			        });
+				},
+				render: function(){
+					return(
+						<div>
+						</div>
+					);
+				}
+			});
+
+			var BixiMap = React.createClass({
+				componentDidMount: function (){
+			        map = new google.maps.Map(document.getElementById('map'), {
+			          zoom: 13,
+			          center: {lat: 43.66207, lng: -79.37617}
+			        });
+			        for(var x = 0; x < latList.length; x ++){
+			        	new google.maps.Marker({
+				          position: {lat: latList[x], lng: longList[x]},
+				          map: map,
+				          title: 'Bixi Station'
+				        });
+			        } 
+			    },
+				render: function(){
+					return(
+						<div></div>
+					);
+				}
+			});
+
+		
+			var InterestsTableButton = React.createClass({
+				propTypes:{
+					onClick: React.PropTypes.func.isRequired
+				},
+
+				render: function(){
+					return (
+						<p><a onClick={this.props.onClick} className="btn btn-primary btn-lg" href="#" role="button">Toronto Interests List</a></p>
+					);
+				}
+			});
+
+			var InterestsMapButton = React.createClass({
+				propTypes:{
+					onClick: React.PropTypes.func.isRequired
+				},
+
+				render: function(){
+					return(
+						<p><a onClick={this.props.onClick} className="btn btn-primary btn-lg" href="#" role="button">Toronto Interests Map</a></p>
+					);
+				}
+			});
+
+			var BixiMapButton = React.createClass({
+				propTypes: {
+					onClick: React.PropTypes.func.isRequired
+				},
+				render: function(){
+					return(
+						<p><a onClick={this.props.onClick} className="btn btn-primary btn-lg" href="#" role="button">Bixi Bike Map</a></p>
+					);
+				}
+			});
+
+
+			var SignOutScreen = React.createClass({
+				render: function(){
+					return(
+						<div></div>
+					);
+				}
+			});
+
+			var Buttons = React.createClass({
+				getInitialState: function(){
+					return({
+						compToShow: null
+					});
+				},
+				render: function(){
+					return(
+						<div>
+							<InterestsTableButton onClick={this.interestsTable.bind(this)} />
+							<InterestsMapButton onClick={this.interestsMap.bind(this)} />
+							<BixiMapButton onClick={this.bixiMap.bind(this)} />
+							<div id="content">
+								{this.state.compToShow}
+							</div>
+						</div>
+					);
+				},
+
+				interestsTable: function(){
+					this.setState({
+						compToShow: <InterestsTable />
+					});
+				},
+				interestsMap: function(){
+					this.setState({
+						compToShow: <InterestsMap />
+					});
+				},
+				bixiMap: function(){
+					this.setState({
+						compToShow:<BixiMap />
+					});
+				}
+
+			});
+
+
+			// Initialize Firebase
+			var config = {
+			    apiKey: "AIzaSyDKT1qFwEfdAzSDTpkg8vr2HiPNKX6Pi8o",
+			    authDomain: "promote-toronto.firebaseapp.com",
+			    databaseURL: "https://promote-toronto.firebaseio.com",
+			    storageBucket: "promote-toronto.appspot.com",
+			  };
+		  	firebase.initializeApp(config);
+
+		  	const txtEmail = document.getElementById("txtEmail");
+		  	const txtPassword = document.getElementById("txtPassword");
+		  	const btnLogin = document.getElementById("btnLogin");
+		  	const btnSingup = document.getElementById("btnSingup");
+		  	const btnLogout = document.getElementById("btnLogout"); 
+		  	const mapDiv = document.getElementById("map"); 
+
+		  	//add login event
+		  	btnLogin.addEventListener("click", e=>{
+		  		const email = txtEmail.value;
+		  		const pass = txtPassword.value;
+		  		const auth = firebase.auth();
+
+		  		//sign in 
+		  		auth.signInWithEmailAndPassword(email, pass);
+		  		promise.catch(e=> console.log(e.message));
+		  	});
+
+		  	// add signup event
+		  	btnSingup.addEventListener("click", e=>{
+		  		const email = txtEmail.value;
+		  		const pass = txtPassword.value;
+		  		const auth = firebase.auth();
+
+		  		//sign up 
+		  		auth.createUserWithEmailAndPassword(email, pass);
+		  		promise.catch(e=> console.log("signed up"));
+		  	});
+
+		  	//sign out
+		  	btnLogout.addEventListener("click", e=>{
+		  		firebase.auth().signOut();
+		  	});
+
+		  	//add a realtime listener
+		  	firebase.auth().onAuthStateChanged(firebaseUser =>{
+		  		if(firebaseUser){
+		  			console.log(firebaseUser);
+		  			btnLogout.classList.remove('hide');
+		  			btnSingup.classList.add('hide');
+		  			btnLogin.classList.add('hide');
+		  			mapDiv.classList.remove('hide');
+
+		  			ReactDOM.render(
+						<Buttons/>,
+						document.getElementById("container")
+					);
+		  		}
+		  		else{
+		  			console.log("not logged in");
+		  			btnLogout.classList.add('hide');
+		  			btnSingup.classList.remove('hide');
+		  			btnLogin.classList.remove('hide');
+		  			mapDiv.classList.add('hide');
+		  			ReactDOM.render(
+						<SignOutScreen/>,
+						document.getElementById("container")
+					);
+		  		}
+		  	});
+		</script>
+	</body>
+
+</html>
